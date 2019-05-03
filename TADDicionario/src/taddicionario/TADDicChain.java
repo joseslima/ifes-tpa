@@ -131,12 +131,25 @@ public class TADDicChain<K, V> {
         return true;
     }
     
+    public boolean itResize(){
+        for (LinkedList<TDicItem> list: this.vetBuckets){
+            if (list.size() > (this.vetBuckets.length * 0.5)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public int[] getColisoes(){
         int colisoes[] = new int[this.vetBuckets.length];
         for(int i = 0 ; i < this.vetBuckets.length ; i++) {
             colisoes[i] = this.vetBuckets[i].size();
         }
         return colisoes;
+    }
+    
+    public void redimesiona(){
+        
     }
     
     public int getLen(){
