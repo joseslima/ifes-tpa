@@ -131,6 +131,14 @@ public class TADDicChain<K, V> {
         return true;
     }
     
+    public int[] getColisoes(){
+        int colisoes[] = new int[this.vetBuckets.length];
+        for(int i = 0 ; i < this.vetBuckets.length ; i++) {
+            colisoes[i] = this.vetBuckets[i].size();
+        }
+        return colisoes;
+    }
+    
     public int getLen(){
         return this.vetBuckets.length;
     }
