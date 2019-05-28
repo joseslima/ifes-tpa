@@ -1,23 +1,23 @@
-package taddicionario;
+package testedic;
 
-public class TDicItem<K,V> {
-    private K key;
-    private V value;
+public class TDicItem {
+    private Object key;
+    private Object value;
     
-    public TDicItem(K key, V value){
+    public TDicItem(Object key, Object value){
         this.value = value;
         this.key = key;
     }
 
-    public V getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public K getKey() {
+    public Object getKey() {
         return key;
     }
 
-    public void setValue(V value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 }

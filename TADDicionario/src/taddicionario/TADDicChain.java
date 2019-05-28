@@ -1,9 +1,9 @@
 
-package taddicionario;
+package testedic;
 
 import java.util.LinkedList;
 
-public class TADDicChain<K, V> {
+public class TADDicChain {
     
     private LinkedList<TDicItem>[] vetBuckets;
     private Hash_engine hashEngine;
@@ -44,17 +44,17 @@ public class TADDicChain<K, V> {
     public int size() {
         return this.quant_entradas;
     }
-    private int getIndex(K key) {
+    private int getIndex(Object key) {
         Long hash = this.hashEngine.generateHash(key);
         return (int) (hash % this.vetBuckets.length);
     }
-    public void insertItem(K key, V item) {
+    public void insertItem(Object key, Object item) {
         int index = getIndex(key);
         this.vetBuckets[index].add(new TDicItem(key, item));
         this.quant_entradas++;
     }
     
-    public TDicItem<K, V> findElement(K key) {
+    public TDicItem findElement(Object key) {
         int index = this.getIndex(key);
         if (!this.vetBuckets[index].isEmpty()) {
             int i = 0;
@@ -69,7 +69,7 @@ public class TADDicChain<K, V> {
         }
         return null;
     }
-    public void removeElement(K key) {
+    public void removeElement(Object key) {
         int index = this.getIndex(key);
         if (!this.vetBuckets[index].isEmpty()) {
             this.vetBuckets[index].remove();
@@ -80,27 +80,26 @@ public class TADDicChain<K, V> {
         return (this.quant_entradas == 0);
     }
     
-    public LinkedList<K> keys(){
+    public LinkedList keys(){
         LinkedList<TDicItem> list;    
-        LinkedList<K> keys = new LinkedList<>();
+        LinkedList<Object> keys = new LinkedList<>();
                 
         for( int i = 0; i < this.vetBuckets.length ; i++){
             list = this.vetBuckets[i];
-            for (TDicItem<K, V> element : list) {
-  
+            for (TDicItem element : list) {
                 keys.add(element.getKey());
             }
         }
         return keys;
     }
     
-    public LinkedList<V> elements(){
+    public LinkedList elements(){
         LinkedList<TDicItem> list;
-        LinkedList<V> values = new LinkedList<>();
+        LinkedList<Object> values = new LinkedList<>();
         
         for( int i = 0; i < this.vetBuckets.length ; i++){
             list = this.vetBuckets[i];
-            for (TDicItem<K, V> element : list) {
+            for (TDicItem element : list) {
                 values.add(element.getValue());
             }
         }
@@ -108,13 +107,44 @@ public class TADDicChain<K, V> {
         return values;
     }
     
-    public TADDicChain<K, V> clone(){
-        TADDicChain<K, V> clone = new TADDicChain();
+    public boolean itResize(){
+        for (LinkedList<TDicItem>list : this.vetBuckets){
+            if (list.size() > (this.vetBuckets.length * 0.5)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void redimesiona(){
+        
+        int len = (int)((int)this.vetBuckets.length * 1.5);
+        LinkedList<TDicItem>[] newVetBuckets = new LinkedList[len];
+
+        for (int i = 0; i < len; i++) {
+            newVetBuckets[i] = new LinkedList<>();
+        }
+
+        for (int j = 0; j < this.vetBuckets.length; j++) {
+            if (this.vetBuckets[j] != null) {
+                for (int k = 0; k < this.vetBuckets[j].size(); k++) {
+                    Object key = this.vetBuckets[j].get(k).getKey();
+                    int index = this.getIndex(key, len);
+                    newVetBuckets[index].add(this.vetBuckets[j].get(k));
+                }
+            }
+        }
+
+        this.vetBuckets = newVetBuckets;
+    }
+    
+    public TADDicChain clone(){
+        TADDicChain clone = new TADDicChain();
         LinkedList<TDicItem> list;
         
         for( int i = 0; i < this.vetBuckets.length ; i++){
             list = this.vetBuckets[i];
-            for (TDicItem<K, V> element : list) {
+            for (TDicItem element : list) {
                 clone.insertItem(element.getKey(), element.getValue());
             }
         }
@@ -123,7 +153,7 @@ public class TADDicChain<K, V> {
     }
     public boolean equals(TADDicChain source) {
         if ((this.getLen() != source.getLen()) || (this.getSize() != source.getSize())) return false;   
-        for (K key : this.keys()) {                    
+        for (Object key : this.keys()) {                    
             Object value = source.findElement(key);
             if (source.NO_SUCH_KEY()) return false;    
             if (value != this.findElement(key)) return false;  
@@ -131,15 +161,7 @@ public class TADDicChain<K, V> {
         return true;
     }
     
-    public boolean itResize(){
-        for (LinkedList<TDicItem> list: this.vetBuckets){
-            if (list.size() > (this.vetBuckets.length * 0.5)){
-                return true;
-            }
-        }
-        return false;
-    }
-    
+   
     public int[] getColisoes(){
         int colisoes[] = new int[this.vetBuckets.length];
         for(int i = 0 ; i < this.vetBuckets.length ; i++) {
@@ -147,17 +169,18 @@ public class TADDicChain<K, V> {
         }
         return colisoes;
     }
-    
-    public void redimesiona(){
         
-    }
-    
     public int getLen(){
         return this.vetBuckets.length;
     }
     
     public int getSize(){
         return this.quant_entradas;
+    }
+
+    private int getIndex(Object key, int len) {
+        Long hash = this.hashEngine.generateHash(key);
+        return (int) (hash % len);
     }
   
 }
